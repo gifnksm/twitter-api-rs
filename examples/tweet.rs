@@ -1,3 +1,7 @@
+#![warn(bad_style,
+        unused, unused_extern_crates, unused_import_braces,
+        unused_qualifications, unused_results, unused_typecasts)]
+
 extern crate "twitter-api" as twitter;
 extern crate "rustc-serialize" as rustc_serialize;
 extern crate "oauth-client" as oauth;

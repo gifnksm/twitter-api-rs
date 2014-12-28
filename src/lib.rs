@@ -1,3 +1,7 @@
+#![warn(bad_style, missing_docs,
+        unused, unused_extern_crates, unused_import_braces,
+        unused_qualifications, unused_results, unused_typecasts)]
+
 extern crate "oauth-client" as oauth;
 
 use std::collections::HashMap;
@@ -45,5 +49,5 @@ pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Token<'
 pub fn tweet(consumer: &Token, access: &Token, status: &str) {
     let mut param = HashMap::new();
     let _ = param.insert("status".into_cow(), status.into_cow());
-    oauth::post(api::STATUSES_UPDATE, consumer, Some(access), Some(&param));
+    let _ = oauth::post(api::STATUSES_UPDATE, consumer, Some(access), Some(&param));
 }
