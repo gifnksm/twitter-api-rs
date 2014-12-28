@@ -3,6 +3,10 @@
 name = "twitter-api"
 version = "0.0.1"
 authors = ["gifnksm <makoto.nksm+github@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/gifnksm/twitter-api-rs"
+description = "Unofficial Rust library for the Twitter API."
 
 [dependencies]
 oauth-client = "*"
