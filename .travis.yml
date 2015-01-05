@@ -1,1 +1,18 @@
 language: rust
+
+script:
+  - cargo build --verbose
+  - cargo test --verbose
+  - cargo doc
+
+after_success: |
+  [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
+  echo '<meta http-equiv=refresh content=0;url=twitter-api/index.html>' > target/doc/index.html &&
+  sudo pip install ghp-import &&
+  ghp-import -n target/doc &&
+  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
+
+env:
+  global:
+    secure: "N0VHBpQ8Co81/xVM+MQn2JZIFkJMNYf1nn+lwxUrfotesRQUAR6Wh3KHl/tgCdAFw+WvYk6kfxQ0ODFJd7iRdlZez2nujwxczXJj4pU+vqcFkJhlr1uBl2HrWeboGVv3M/60HWyERRz5nI5lGR5FP5qgPQTE/KRTnrPYADBgKNo="
