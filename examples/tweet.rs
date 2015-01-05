@@ -2,17 +2,20 @@
         unused, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results, unused_typecasts)]
 
+#![feature(old_orphan_check)]
+
 extern crate "twitter-api" as twitter;
 extern crate "rustc-serialize" as rustc_serialize;
 extern crate "oauth-client" as oauth;
 
 use std::io::{File, Open, Read, Write, stdio};
-use rustc_serialize::{json, Decodable};
+use rustc_serialize::Decodable;
+use rustc_serialize::json::{self, Json};
 use oauth::Token;
 
 const PATH: &'static str = "./tweet.conf";
 
-#[deriving(Show, RustcEncodable, RustcDecodable)]
+#[derive(Show, RustcEncodable, RustcDecodable)]
 pub struct Config {
     pub consumer_key: String,
     pub consumer_secret: String,
@@ -27,7 +30,7 @@ impl Config {
             Ok(f) => f,
             Err(_) => return None
         };
-        let conf = json::from_reader(&mut file).unwrap();
+        let conf = Json::from_reader(&mut file).unwrap();
         Decodable::decode(&mut json::Decoder::new(conf)).ok()
     }
 

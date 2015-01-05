@@ -4,6 +4,7 @@
 
 extern crate "oauth-client" as oauth;
 
+use std::borrow::IntoCow;
 use std::collections::HashMap;
 use std::str::CowString;
 use oauth::Token;
