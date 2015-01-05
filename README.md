@@ -1,9 +1,22 @@
-# twitter-api-rs
-
-[![Build Status](https://travis-ci.org/gifnksm/twitter-api-rs.svg)](https://travis-ci.org/gifnksm/twitter-api-rs)
+# twitter-api-rs [![Build Status](https://travis-ci.org/gifnksm/twitter-api-rs.svg)](https://travis-ci.org/gifnksm/twitter-api-rs)
 
 Unofficial Rust library for the Twitter API.
 
+[Documentation](http://gifnksm.github.io/twitter-api-rs)
+
 ## How to use?
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+twitter-api = "*"
+```
+
+and this to your crate root:
+
+```rust
+extern crate "twitter-api" as twitter;
+```
 
 See [examples](./examples).
