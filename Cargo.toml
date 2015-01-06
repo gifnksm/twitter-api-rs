@@ -7,6 +7,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/gifnksm/twitter-api-rs"
 description = "Unofficial Rust library for the Twitter API."
+documentation = "https://gifnksm.github.io/twitter-api-rs"
 
 [dependencies]
 oauth-client = "*"

@@ -2,7 +2,7 @@
 
 Unofficial Rust library for the Twitter API.
 
-[Documentation](http://gifnksm.github.io/twitter-api-rs)
+[Documentation](https://gifnksm.github.io/twitter-api-rs)
 
 ## How to use?
 
