@@ -2,18 +2,20 @@
         unused, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results, unused_typecasts)]
 
+#![feature(io, path)]
+
 extern crate "twitter-api" as twitter;
 extern crate "rustc-serialize" as rustc_serialize;
 extern crate "oauth-client" as oauth;
 
-use std::io::{File, Open, Read, Write, stdio};
+use std::old_io::{File, Open, Read, Write, stdio};
 use rustc_serialize::Decodable;
 use rustc_serialize::json::{self, Json};
 use oauth::Token;
 
 const PATH: &'static str = "./tweet.conf";
 
-#[derive(Show, RustcEncodable, RustcDecodable)]
+#[derive(Debug, RustcEncodable, RustcDecodable)]
 pub struct Config {
     pub consumer_key: String,
     pub consumer_secret: String,
@@ -60,7 +62,7 @@ fn main() {
             println!("open the following url:");
             println!("\t{}", twitter::get_authorize_url(&request));
             let pin = console_input("input pin:");
-            let access = twitter::get_access_token(&consumer, &request, pin.as_slice());
+            let access = twitter::get_access_token(&consumer, &request, &pin[]);
 
             let c = Config {
                 consumer_key: consumer.key.to_string(),
@@ -77,6 +79,6 @@ fn main() {
     let access = Token::new(conf.access_key, conf.access_secret);
 
     let status = console_input("What's happening?");
-    twitter::tweet(&consumer, &access, status.as_slice());
+    twitter::tweet(&consumer, &access, &status[]);
 }
 
