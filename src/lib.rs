@@ -2,13 +2,10 @@
         unused, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results, unused_typecasts)]
 
-#![feature(core)]
-
 extern crate "oauth-client" as oauth;
 
-use std::borrow::IntoCow;
+use std::borrow::{Cow, IntoCow};
 use std::collections::HashMap;
-use std::string::CowString;
 use oauth::Token;
 
 mod api {
@@ -18,7 +15,7 @@ mod api {
     pub const STATUSES_UPDATE: &'static str = "https://api.twitter.com/1.1/statuses/update.json";
 }
 
-fn split_query<'a>(query: &'a str) -> HashMap<CowString<'a>, CowString<'a>> {
+fn split_query<'a>(query: &'a str) -> HashMap<Cow<'a, str>, Cow<'a, str>> {
     let mut param = HashMap::new();
     for q in query.split('&') {
         let mut s = q.splitn(2, '=');
@@ -31,7 +28,7 @@ fn split_query<'a>(query: &'a str) -> HashMap<CowString<'a>, CowString<'a>> {
 
 pub fn get_request_token(consumer: &Token) -> Token<'static> {
     let resp = oauth::get(api::REQUEST_TOKEN, consumer, None, None);
-    let param = split_query(resp.as_slice());
+    let param = split_query(&resp);
     Token::new(param.get("oauth_token").unwrap().to_string(),
                param.get("oauth_token_secret").unwrap().to_string())
 }
@@ -44,7 +41,7 @@ pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Token<'
     let mut param = HashMap::new();
     let _ = param.insert("oauth_verifier".into_cow(), pin.into_cow());
     let resp = oauth::get(api::ACCESS_TOKEN, consumer, Some(request), Some(&param));
-    let param = split_query(resp.as_slice());
+    let param = split_query(&resp);
     Token::new(param.get("oauth_token").unwrap().to_string(),
                param.get("oauth_token_secret").unwrap().to_string())
 }

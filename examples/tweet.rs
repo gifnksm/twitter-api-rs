@@ -2,7 +2,7 @@
         unused, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results, unused_typecasts)]
 
-#![feature(io, path)]
+#![feature(old_io, old_path)]
 
 extern crate "twitter-api" as twitter;
 extern crate "rustc-serialize" as rustc_serialize;
@@ -40,7 +40,7 @@ impl Config {
             Ok(f) => f,
             Err(e) => panic!("{}", e)
         };
-        let _ = file.write_line(&json::encode(self).unwrap()[]);
+        let _ = file.write_line(&json::encode(self).unwrap());
     }
 }
 
@@ -62,7 +62,7 @@ fn main() {
             println!("open the following url:");
             println!("\t{}", twitter::get_authorize_url(&request));
             let pin = console_input("input pin:");
-            let access = twitter::get_access_token(&consumer, &request, &pin[]);
+            let access = twitter::get_access_token(&consumer, &request, &pin);
 
             let c = Config {
                 consumer_key: consumer.key.to_string(),
@@ -79,6 +79,6 @@ fn main() {
     let access = Token::new(conf.access_key, conf.access_secret);
 
     let status = console_input("What's happening?");
-    twitter::tweet(&consumer, &access, &status[]);
+    twitter::tweet(&consumer, &access, &status);
 }
 
