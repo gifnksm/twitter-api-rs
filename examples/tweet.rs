@@ -2,13 +2,16 @@
         unused, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results, unused_typecasts)]
 
-#![feature(old_io, old_path)]
+#![feature(io, fs, old_io, path)]
 
 extern crate "twitter-api" as twitter;
 extern crate "rustc-serialize" as rustc_serialize;
 extern crate "oauth-client" as oauth;
 
-use std::old_io::{File, Open, Read, Write, stdio};
+use std::old_io::stdio;
+use std::io::Write;
+use std::fs::{File, OpenOptions};
+use std::path::Path;
 use rustc_serialize::Decodable;
 use rustc_serialize::json::{self, Json};
 use oauth::Token;
@@ -26,7 +29,7 @@ pub struct Config {
 impl Config {
     pub fn read() -> Option<Config> {
         let path = Path::new(PATH);
-        let mut file = match File::open_mode(&path, Open, Read) {
+        let mut file = match File::open(&path) {
             Ok(f) => f,
             Err(_) => return None
         };
@@ -36,11 +39,11 @@ impl Config {
 
     pub fn write(&self) {
         let path = Path::new(PATH);
-        let mut file = match File::open_mode(&path, Open, Write) {
+        let mut file = match OpenOptions::new().write(true).open(&path) {
             Ok(f) => f,
             Err(e) => panic!("{}", e)
         };
-        let _ = file.write_line(&json::encode(self).unwrap());
+        let _ = write!(&mut file, "{}\n", &json::encode(self).unwrap());
     }
 }
 
