@@ -2,14 +2,12 @@
         unused, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results, unused_typecasts)]
 
-#![feature(io, fs, old_io, path)]
-
 extern crate "twitter-api" as twitter;
 extern crate "rustc-serialize" as rustc_serialize;
 extern crate "oauth-client" as oauth;
 
-use std::old_io::stdio;
-use std::io::Write;
+use std::io;
+use std::io::prelude::*;
 use std::fs::{File, OpenOptions};
 use std::path::Path;
 use rustc_serialize::Decodable;
@@ -49,7 +47,8 @@ impl Config {
 
 fn console_input(prompt: &str) -> String {
     print!("{}\n\t", prompt);
-    let line = stdio::stdin().read_line().unwrap();
+    let mut line = String::new();
+    let _ = io::stdin().read_line(&mut line).unwrap();
     line.trim().to_string()
 }
 
