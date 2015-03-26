@@ -2,9 +2,9 @@
         unused, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results, unused_typecasts)]
 
-extern crate "twitter-api" as twitter;
-extern crate "rustc-serialize" as rustc_serialize;
-extern crate "oauth-client" as oauth;
+extern crate twitter_api as twitter;
+extern crate rustc_serialize as rustc_serialize;
+extern crate oauth_client as oauth;
 
 use std::io;
 use std::io::prelude::*;
