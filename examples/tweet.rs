@@ -1,6 +1,6 @@
 #![warn(bad_style,
         unused, unused_extern_crates, unused_import_braces,
-        unused_qualifications, unused_results, unused_typecasts)]
+        unused_qualifications, unused_results)]
 
 extern crate twitter_api as twitter;
 extern crate rustc_serialize as rustc_serialize;
