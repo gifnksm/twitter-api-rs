@@ -16,7 +16,7 @@ twitter-api = "*"
 and this to your crate root:
 
 ```rust
-extern crate "twitter-api" as twitter;
+extern crate twitter_api;
 ```
 
 See [examples](./examples).
