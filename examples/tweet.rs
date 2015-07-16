@@ -36,9 +36,8 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn read() -> Option<Config> {
-        let path = Path::new(PATH);
-        let mut file = match File::open(&path) {
+    pub fn read(path_file : &Path) -> Option<Config> {
+        let mut file = match File::open(path_file) {
             Ok(f) => f,
             Err(_) => return None
         };
