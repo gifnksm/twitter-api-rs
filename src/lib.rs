@@ -17,7 +17,7 @@ mod api_twitter_oauth {
 }
 
 mod api_twitter_soft {
-    pub const STATUSES_UPDATE: &'static str = "https://api.twitter.com/1.1/statuses/update.json";
+    pub const UPDATE_STATUS: &'static str = "https://api.twitter.com/1.1/statuses/update.json";
 }
 
 fn split_query<'a>(query: &'a str) -> HashMap<Cow<'a, str>, Cow<'a, str>> {
@@ -56,6 +56,6 @@ pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Token<'
 pub fn update_status(consumer: &Token, access: &Token, status: &str) {
     let mut param = HashMap::new();
     let _ = param.insert("status".into_cow(), status.into_cow());
-    let _ = oauth::post(api_twitter_soft::STATUSES_UPDATE, consumer, Some(access), Some(&param));
+    let _ = oauth::post(api_twitter_soft::UPDATE_STATUS, consumer, Some(access), Some(&param));
 }
 }
