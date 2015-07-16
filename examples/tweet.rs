@@ -74,6 +74,11 @@ fn main() {
     let mut twitter_conf_file_path : PathBuf = get_home_dir();
     twitter_conf_file_path.push(Path::new(TWITTER_CONF_FILENAME));
 
+    println!("#####################");
+    println!("#Welcome to Rwitter!#");
+    println!("#####################");
+
+
     let conf = match Config::read(&twitter_conf_file_path) {
         Some(c) => c,
         None => {
