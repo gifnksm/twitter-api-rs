@@ -62,7 +62,7 @@ impl Config {
 }
 
 fn console_input(prompt: &str) -> String {
-    print!("{}\n\t", prompt);
+    println!("{} : ", prompt);
     let mut line = String::new();
     let _ = io::stdin().read_line(&mut line).unwrap();
     line.trim().to_string()
