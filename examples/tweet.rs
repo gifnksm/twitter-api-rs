@@ -18,6 +18,15 @@ use oauth::Token;
 
 const TWITTER_CONF_FILENAME: &'static str = ".twitter.conf";
 
+fn get_home_dir() -> PathBuf{
+    match env::home_dir() {
+        Some(p) => p,
+        None => {
+            panic!("Impossible to get your home dir!");
+        }
+    }
+}
+
 #[derive(Debug, RustcEncodable, RustcDecodable)]
 pub struct Config {
     pub consumer_key: String,
