@@ -105,6 +105,5 @@ fn main() {
     let access = Token::new(conf.access_key, conf.access_secret);
 
     let status = console_input("What's happening?");
-    twitter::tweet(&consumer, &access, &status);
+    twitter::update_status(&consumer, &access, &status);
 }
-
