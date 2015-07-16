@@ -6,6 +6,7 @@ extern crate twitter_api as twitter;
 extern crate rustc_serialize as rustc_serialize;
 extern crate oauth_client as oauth;
 
+use std::convert::AsRef;
 use std::io;
 use std::io::prelude::*;
 use std::env;
