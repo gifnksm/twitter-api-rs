@@ -45,9 +45,8 @@ impl Config {
         Decodable::decode(&mut json::Decoder::new(conf)).ok()
     }
 
-    pub fn write(&self) {
-        let path = Path::new(PATH);
-        let mut file = match OpenOptions::new().write(true).open(&path) {
+    pub fn write(&self, path_file : &Path) {
+        let mut file = match OpenOptions::new().write(true).open(path_file) {
             Ok(f) => f,
             Err(e) => panic!("{}", e)
         };
