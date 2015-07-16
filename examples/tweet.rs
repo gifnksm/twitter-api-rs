@@ -104,6 +104,18 @@ fn main() {
     let consumer = Token::new(conf.consumer_key, conf.consumer_secret);
     let access = Token::new(conf.access_key, conf.access_secret);
 
-    let status = console_input("What's happening?");
-    twitter::update_status(&consumer, &access, &status);
+    loop {
+        let make_your_choice = console_input("What do you want to do?");
+
+        match make_your_choice.as_ref() {
+            "update status" => {
+                let status = console_input("What's happening?");
+                twitter::update_status(&consumer, &access, &status);
+            },
+            "get timeline" => {
+                twitter::get_last_tweets(&consumer, &access);
+            },
+            _ => break
+        }
+    }
 }
