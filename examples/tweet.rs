@@ -72,8 +72,13 @@ fn main() {
     //Get the full path of the Twitter configuration path
     let mut twitter_conf_file_path : PathBuf = get_home_dir();
     twitter_conf_file_path.push(Path::new(TWITTER_CONF_FILENAME));
+
+    let conf = match Config::read(&twitter_conf_file_path) {
         Some(c) => c,
         None => {
+
+            Config::create(&twitter_conf_file_path);
+
             let consumer_key    = console_input("input your consumer key:");
             let consumer_secret = console_input("input your consumer secret:");
             let consumer = Token::new(consumer_key, consumer_secret);
@@ -90,7 +95,8 @@ fn main() {
                 access_key: access.key.to_string(),
                 access_secret: access.secret.to_string()
             };
-            c.write();
+
+            c.write(&twitter_conf_file_path);
             c
         }
     };
