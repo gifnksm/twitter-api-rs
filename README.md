@@ -2,6 +2,13 @@
 
 Unofficial Rust library for the Twitter API.
 
+This library allows you to:
+
+*   get your timeline,
+*   update your timeline.
+
+This library uses the rust-oauth library (please to see ```oauth-client```).
+
 [Documentation](https://gifnksm.github.io/twitter-api-rs)
 
 ## How to use?
