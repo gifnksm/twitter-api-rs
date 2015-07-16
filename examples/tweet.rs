@@ -8,8 +8,10 @@ extern crate oauth_client as oauth;
 
 use std::io;
 use std::io::prelude::*;
+use std::env;
 use std::fs::{File, OpenOptions};
 use std::path::Path;
+use std::path::PathBuf;
 use rustc_serialize::Decodable;
 use rustc_serialize::json::{self, Json};
 use oauth::Token;
