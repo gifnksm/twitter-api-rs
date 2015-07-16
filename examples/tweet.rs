@@ -16,7 +16,7 @@ use rustc_serialize::Decodable;
 use rustc_serialize::json::{self, Json};
 use oauth::Token;
 
-const PATH: &'static str = "./tweet.conf";
+const TWITTER_CONF_FILENAME: &'static str = ".twitter.conf";
 
 #[derive(Debug, RustcEncodable, RustcDecodable)]
 pub struct Config {
