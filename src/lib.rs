@@ -59,4 +59,8 @@ pub fn update_status(consumer: &Token, access: &Token, status: &str) {
     let _ = param.insert("status".into_cow(), status.into_cow());
     let _ = oauth::post(api_twitter_soft::UPDATE_STATUS, consumer, Some(access), Some(&param));
 }
+
+pub fn get_last_tweets(consumer: &Token, access: &Token) {
+    let mut param = HashMap::new();
+    println!("{:?}", oauth::get(api_twitter_soft::HOME_TIMELINE, consumer, Some(access), Some(&param)));
 }
