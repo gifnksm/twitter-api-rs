@@ -69,7 +69,9 @@ fn console_input(prompt: &str) -> String {
 }
 
 fn main() {
-    let conf = match Config::read() {
+    //Get the full path of the Twitter configuration path
+    let mut twitter_conf_file_path : PathBuf = get_home_dir();
+    twitter_conf_file_path.push(Path::new(TWITTER_CONF_FILENAME));
         Some(c) => c,
         None => {
             let consumer_key    = console_input("input your consumer key:");
