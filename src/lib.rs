@@ -48,7 +48,9 @@ pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Token<'
                param.get("oauth_token_secret").unwrap().to_string())
 }
 
-pub fn tweet(consumer: &Token, access: &Token, status: &str) {
+/// function to update the status
+/// This function takes as arguments the consumer key, the access key, and the status (obviously)
+pub fn update_status(consumer: &Token, access: &Token, status: &str) {
     let mut param = HashMap::new();
     let _ = param.insert("status".into_cow(), status.into_cow());
     let _ = oauth::post(api::STATUSES_UPDATE, consumer, Some(access), Some(&param));
