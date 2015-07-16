@@ -52,6 +52,13 @@ impl Config {
         };
         let _ = write!(&mut file, "{}\n", &json::encode(self).unwrap());
     }
+
+    pub fn create(path_file : &Path) {
+        match File::create(path_file) {
+            Ok(_) => println!("File created!"),
+            Err(_) => panic!("Problem to create the file...\nProgram aborted!")
+        }
+    }
 }
 
 fn console_input(prompt: &str) -> String {
