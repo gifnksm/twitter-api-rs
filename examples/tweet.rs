@@ -69,6 +69,11 @@ fn console_input(prompt: &str) -> String {
     line.trim().to_string()
 }
 
+fn help() -> () {
+    println!("update status : update your status.");
+    println!("get timeline : get your personal timeline in your console.")
+}
+
 fn main() {
     //Get the full path of the Twitter configuration path
     let mut twitter_conf_file_path : PathBuf = get_home_dir();
