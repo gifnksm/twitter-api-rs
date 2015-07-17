@@ -126,7 +126,13 @@ fn main() {
             "get timeline" => {
                 twitter::get_last_tweets(&consumer, &access);
             },
-            _ => break
+            "help" => {
+                help();
+            }
+            _ => {
+                println!("Bye!");
+                break;
+            }
         }
     }
 }
