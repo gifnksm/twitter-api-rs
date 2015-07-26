@@ -24,6 +24,21 @@ mod api_twitter_soft {
     pub const HOME_TIMELINE: &'static str = "https://api.twitter.com/1.1/statuses/home_timeline.json";
 }
 
+#[derive(Debug, RustcEncodable, RustcDecodable)]
+pub struct Tweet {
+    pub created_at: String,
+    pub text: String
+}
+
+impl Tweet {
+    pub fn parse_timeline(json_string: String) -> Option<Tweet> {
+        let conf = Json::from_str(&json_string).unwrap();
+        let d = Decodable::decode(&mut json::Decoder::new(conf));
+        println!("{:?}", d);
+        d.ok()
+    }
+}
+
 fn split_query<'a>(query: &'a str) -> HashMap<Cow<'a, str>, Cow<'a, str>> {
     let mut param = HashMap::new();
     for q in query.split('&') {
