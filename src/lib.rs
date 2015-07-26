@@ -78,7 +78,11 @@ pub fn update_status(consumer: &Token, access: &Token, status: &str) {
     let _ = oauth::post(api_twitter_soft::UPDATE_STATUS, consumer, Some(access), Some(&param));
 }
 
-pub fn get_last_tweets(consumer: &Token, access: &Token) {
+pub fn get_last_tweets(consumer: &Token, access: &Token){
     let mut param = HashMap::new();
-    println!("{:?}", oauth::get(api_twitter_soft::HOME_TIMELINE, consumer, Some(access), Some(&param)));
+    let last_tweets_json = oauth::get(api_twitter_soft::HOME_TIMELINE, consumer, Some(access), Some(&param));
+    match Tweet::parse_timeline(last_tweets_json) {
+        Some(t) => println!("{} - {}", t.created_at, t.text),
+        None => println!("No tweet in your timeline...")
+    }
 }
