@@ -11,7 +11,7 @@ documentation = "https://gifnksm.github.io/twitter-api-rs"
 
 [dependencies]
 oauth-client = "*"
+rustc-serialize = "*"
 
 [dev-dependencies]
 rustc-serialize = "*"
-
