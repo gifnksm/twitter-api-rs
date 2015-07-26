@@ -5,10 +5,13 @@
 #![feature(into_cow)]
 
 extern crate oauth_client as oauth;
+extern crate rustc_serialize as rustc_serialize;
 
 use std::borrow::{Cow, IntoCow};
 use std::collections::HashMap;
 use oauth::Token;
+use rustc_serialize::Decodable;
+use rustc_serialize::json::{self, Json};
 
 mod api_twitter_oauth {
     pub const REQUEST_TOKEN: &'static str   = "https://api.twitter.com/oauth/request_token";
