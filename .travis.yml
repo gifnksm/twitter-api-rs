@@ -1,18 +1,35 @@
 language: rust
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - libcurl4-openssl-dev
+      - libelf-dev
+      - libdw-dev
+
+rust:
+  - nightly
+
+before_script:
+  - |
+      pip install 'travis-cargo<0.2' --user &&
+      export PATH=$HOME/.local/bin:$PATH
 
 script:
-  - cargo build --verbose
-  - cargo test --verbose
-  - cargo doc
+  - |
+      travis-cargo build &&
+      travis-cargo test &&
+      travis-cargo bench &&
+      travis-cargo --only stable doc
 
-after_success: |
-  [ $TRAVIS_BRANCH = master ] &&
-  [ $TRAVIS_PULL_REQUEST = false ] &&
-  echo '<meta http-equiv=refresh content=0;url=twitter_api/index.html>' > target/doc/index.html &&
-  sudo pip install ghp-import &&
-  ghp-import -n target/doc &&
-  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
-
+after_success:
+  # upload the documentation from the build with stable (automatically only actually
+  # runs on the master branch, not individual PRs)
+  - travis-cargo --only stable doc-upload
+  # measure code coverage and upload to coveralls.io
+  - travis-cargo coveralls --no-sudo
 env:
   global:
-    secure: "N0VHBpQ8Co81/xVM+MQn2JZIFkJMNYf1nn+lwxUrfotesRQUAR6Wh3KHl/tgCdAFw+WvYk6kfxQ0ODFJd7iRdlZez2nujwxczXJj4pU+vqcFkJhlr1uBl2HrWeboGVv3M/60HWyERRz5nI5lGR5FP5qgPQTE/KRTnrPYADBgKNo="
+    - TRAVIS_CARGO_NIGHTLY_FEATURE=""
+    - secure: "N0VHBpQ8Co81/xVM+MQn2JZIFkJMNYf1nn+lwxUrfotesRQUAR6Wh3KHl/tgCdAFw+WvYk6kfxQ0ODFJd7iRdlZez2nujwxczXJj4pU+vqcFkJhlr1uBl2HrWeboGVv3M/60HWyERRz5nI5lGR5FP5qgPQTE/KRTnrPYADBgKNo="
