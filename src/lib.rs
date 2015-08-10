@@ -2,11 +2,9 @@
         unused, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results)]
 
-#![feature(into_cow)]
-
 extern crate oauth_client as oauth;
 
-use std::borrow::{Cow, IntoCow};
+use std::borrow::Cow;
 use std::collections::HashMap;
 use oauth::Token;
 
@@ -23,7 +21,7 @@ fn split_query<'a>(query: &'a str) -> HashMap<Cow<'a, str>, Cow<'a, str>> {
         let mut s = q.splitn(2, '=');
         let k = s.next().unwrap();
         let v = s.next().unwrap();
-        let _ = param.insert(k.into_cow(), v.into_cow());
+        let _ = param.insert(k.into(), v.into());
     }
     param
 }
@@ -41,7 +39,7 @@ pub fn get_authorize_url(request: &Token) -> String {
 
 pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Token<'static> {
     let mut param = HashMap::new();
-    let _ = param.insert("oauth_verifier".into_cow(), pin.into_cow());
+    let _ = param.insert("oauth_verifier".into(), pin.into());
     let resp = oauth::get(api::ACCESS_TOKEN, consumer, Some(request), Some(&param));
     let param = split_query(&resp);
     Token::new(param.get("oauth_token").unwrap().to_string(),
@@ -50,6 +48,6 @@ pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Token<'
 
 pub fn tweet(consumer: &Token, access: &Token, status: &str) {
     let mut param = HashMap::new();
-    let _ = param.insert("status".into_cow(), status.into_cow());
+    let _ = param.insert("status".into(), status.into());
     let _ = oauth::post(api::STATUSES_UPDATE, consumer, Some(access), Some(&param));
 }
