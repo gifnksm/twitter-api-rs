@@ -94,11 +94,11 @@ fn main() {
             let consumer_secret = console_input("input your consumer secret:");
             let consumer = Token::new(consumer_key, consumer_secret);
 
-            let request = twitter::get_request_token(&consumer);
+            let request = twitter::get_request_token(&consumer).unwrap();
             println!("open the following url:");
             println!("\t{}", twitter::get_authorize_url(&request));
             let pin = console_input("input pin:");
-            let access = twitter::get_access_token(&consumer, &request, &pin);
+            let access = twitter::get_access_token(&consumer, &request, &pin).unwrap();
 
             let c = Config {
                 consumer_key: consumer.key.to_string(),
@@ -121,10 +121,17 @@ fn main() {
         match make_your_choice.as_ref() {
             "update status" => {
                 let status = console_input("What's happening?");
-                twitter::update_status(&consumer, &access, &status);
+                twitter::update_status(&consumer, &access, &status).unwrap();
             }
             "get timeline" => {
-                twitter::get_last_tweets(&consumer, &access);
+                let ts = twitter::get_last_tweets(&consumer, &access).unwrap();
+                if ts.is_empty() {
+                    println!("No tweet in your timeline...");
+                } else {
+                    for t in ts {
+                        println!("{} - {}", t.created_at, t.text)
+                    }
+                }
             }
             "help" => {
                 help();
