@@ -6,15 +6,27 @@ extern crate twitter_api as twitter;
 extern crate rustc_serialize as rustc_serialize;
 extern crate oauth_client as oauth;
 
+use std::convert::AsRef;
 use std::io;
 use std::io::prelude::*;
+use std::env;
 use std::fs::{File, OpenOptions};
 use std::path::Path;
+use std::path::PathBuf;
 use rustc_serialize::Decodable;
 use rustc_serialize::json::{self, Json};
 use oauth::Token;
 
-const PATH: &'static str = "./tweet.conf";
+const TWITTER_CONF_FILENAME: &'static str = ".twitter.conf";
+
+fn get_home_dir() -> PathBuf{
+    match env::home_dir() {
+        Some(p) => p,
+        None => {
+            panic!("Impossible to get your home dir!");
+        }
+    }
+}
 
 #[derive(Debug, RustcEncodable, RustcDecodable)]
 pub struct Config {
@@ -25,9 +37,8 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn read() -> Option<Config> {
-        let path = Path::new(PATH);
-        let mut file = match File::open(&path) {
+    pub fn read(path_file : &Path) -> Option<Config> {
+        let mut file = match File::open(path_file) {
             Ok(f) => f,
             Err(_) => return None
         };
@@ -35,27 +46,50 @@ impl Config {
         Decodable::decode(&mut json::Decoder::new(conf)).ok()
     }
 
-    pub fn write(&self) {
-        let path = Path::new(PATH);
-        let mut file = match OpenOptions::new().write(true).open(&path) {
+    pub fn write(&self, path_file : &Path) {
+        let mut file = match OpenOptions::new().write(true).open(path_file) {
             Ok(f) => f,
             Err(e) => panic!("{}", e)
         };
         let _ = write!(&mut file, "{}\n", &json::encode(self).unwrap());
     }
+
+    pub fn create(path_file : &Path) {
+        match File::create(path_file) {
+            Ok(_) => println!("File created!"),
+            Err(_) => panic!("Problem to create the file...\nProgram aborted!")
+        }
+    }
 }
 
 fn console_input(prompt: &str) -> String {
-    print!("{}\n\t", prompt);
+    println!("{} : ", prompt);
     let mut line = String::new();
     let _ = io::stdin().read_line(&mut line).unwrap();
     line.trim().to_string()
 }
 
+fn help() -> () {
+    println!("update status : update your status.");
+    println!("get timeline : get your personal timeline in your console.")
+}
+
 fn main() {
-    let conf = match Config::read() {
+    //Get the full path of the Twitter configuration path
+    let mut twitter_conf_file_path : PathBuf = get_home_dir();
+    twitter_conf_file_path.push(Path::new(TWITTER_CONF_FILENAME));
+
+    println!("#####################");
+    println!("#Welcome to Rwitter!#");
+    println!("#####################");
+
+
+    let conf = match Config::read(&twitter_conf_file_path) {
         Some(c) => c,
         None => {
+
+            Config::create(&twitter_conf_file_path);
+
             let consumer_key    = console_input("input your consumer key:");
             let consumer_secret = console_input("input your consumer secret:");
             let consumer = Token::new(consumer_key, consumer_secret);
@@ -72,7 +106,8 @@ fn main() {
                 access_key: access.key.to_string(),
                 access_secret: access.secret.to_string()
             };
-            c.write();
+
+            c.write(&twitter_conf_file_path);
             c
         }
     };
@@ -80,7 +115,24 @@ fn main() {
     let consumer = Token::new(conf.consumer_key, conf.consumer_secret);
     let access = Token::new(conf.access_key, conf.access_secret);
 
-    let status = console_input("What's happening?");
-    twitter::tweet(&consumer, &access, &status);
-}
+    loop {
+        let make_your_choice = console_input("What do you want to do?");
 
+        match make_your_choice.as_ref() {
+            "update status" => {
+                let status = console_input("What's happening?");
+                twitter::update_status(&consumer, &access, &status);
+            },
+            "get timeline" => {
+                twitter::get_last_tweets(&consumer, &access);
+            },
+            "help" => {
+                help();
+            }
+            _ => {
+                println!("Bye!");
+                break;
+            }
+        }
+    }
+}
