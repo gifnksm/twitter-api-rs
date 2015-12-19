@@ -19,7 +19,7 @@ use oauth::Token;
 
 const TWITTER_CONF_FILENAME: &'static str = ".twitter.conf";
 
-fn get_home_dir() -> PathBuf{
+fn get_home_dir() -> PathBuf {
     match env::home_dir() {
         Some(p) => p,
         None => {
@@ -33,31 +33,31 @@ pub struct Config {
     pub consumer_key: String,
     pub consumer_secret: String,
     pub access_key: String,
-    pub access_secret: String
+    pub access_secret: String,
 }
 
 impl Config {
-    pub fn read(path_file : &Path) -> Option<Config> {
+    pub fn read(path_file: &Path) -> Option<Config> {
         let mut file = match File::open(path_file) {
             Ok(f) => f,
-            Err(_) => return None
+            Err(_) => return None,
         };
         let conf = Json::from_reader(&mut file).unwrap();
         Decodable::decode(&mut json::Decoder::new(conf)).ok()
     }
 
-    pub fn write(&self, path_file : &Path) {
+    pub fn write(&self, path_file: &Path) {
         let mut file = match OpenOptions::new().write(true).open(path_file) {
             Ok(f) => f,
-            Err(e) => panic!("{}", e)
+            Err(e) => panic!("{}", e),
         };
         let _ = write!(&mut file, "{}\n", &json::encode(self).unwrap());
     }
 
-    pub fn create(path_file : &Path) {
+    pub fn create(path_file: &Path) {
         match File::create(path_file) {
             Ok(_) => println!("File created!"),
-            Err(_) => panic!("Problem to create the file...\nProgram aborted!")
+            Err(_) => panic!("Problem to create the file...\nProgram aborted!"),
         }
     }
 }
@@ -75,8 +75,8 @@ fn help() -> () {
 }
 
 fn main() {
-    //Get the full path of the Twitter configuration path
-    let mut twitter_conf_file_path : PathBuf = get_home_dir();
+    // Get the full path of the Twitter configuration path
+    let mut twitter_conf_file_path: PathBuf = get_home_dir();
     twitter_conf_file_path.push(Path::new(TWITTER_CONF_FILENAME));
 
     println!("#####################");
@@ -90,7 +90,7 @@ fn main() {
 
             Config::create(&twitter_conf_file_path);
 
-            let consumer_key    = console_input("input your consumer key:");
+            let consumer_key = console_input("input your consumer key:");
             let consumer_secret = console_input("input your consumer secret:");
             let consumer = Token::new(consumer_key, consumer_secret);
 
@@ -104,7 +104,7 @@ fn main() {
                 consumer_key: consumer.key.to_string(),
                 consumer_secret: consumer.secret.to_string(),
                 access_key: access.key.to_string(),
-                access_secret: access.secret.to_string()
+                access_secret: access.secret.to_string(),
             };
 
             c.write(&twitter_conf_file_path);
@@ -122,10 +122,10 @@ fn main() {
             "update status" => {
                 let status = console_input("What's happening?");
                 twitter::update_status(&consumer, &access, &status);
-            },
+            }
             "get timeline" => {
                 twitter::get_last_tweets(&consumer, &access);
-            },
+            }
             "help" => {
                 help();
             }

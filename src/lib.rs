@@ -12,20 +12,21 @@ use rustc_serialize::Decodable;
 use rustc_serialize::json::{self, Json};
 
 mod api_twitter_oauth {
-    pub const REQUEST_TOKEN: &'static str   = "https://api.twitter.com/oauth/request_token";
-    pub const AUTHORIZE: &'static str       = "https://api.twitter.com/oauth/authorize";
-    pub const ACCESS_TOKEN: &'static str    = "https://api.twitter.com/oauth/access_token";
+    pub const REQUEST_TOKEN: &'static str = "https://api.twitter.com/oauth/request_token";
+    pub const AUTHORIZE: &'static str = "https://api.twitter.com/oauth/authorize";
+    pub const ACCESS_TOKEN: &'static str = "https://api.twitter.com/oauth/access_token";
 }
 
 mod api_twitter_soft {
     pub const UPDATE_STATUS: &'static str = "https://api.twitter.com/1.1/statuses/update.json";
-    pub const HOME_TIMELINE: &'static str = "https://api.twitter.com/1.1/statuses/home_timeline.json";
+    pub const HOME_TIMELINE: &'static str = "https://api.twitter.com/1.1/statuses/home_timeline.\
+                                             json";
 }
 
 #[derive(Debug, RustcEncodable, RustcDecodable)]
 pub struct Tweet {
     pub created_at: String,
-    pub text: String
+    pub text: String,
 }
 
 impl Tweet {
@@ -56,13 +57,18 @@ pub fn get_request_token(consumer: &Token) -> Token<'static> {
 }
 
 pub fn get_authorize_url(request: &Token) -> String {
-    format!("{}?oauth_token={}", api_twitter_oauth::AUTHORIZE, request.key)
+    format!("{}?oauth_token={}",
+            api_twitter_oauth::AUTHORIZE,
+            request.key)
 }
 
 pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Token<'static> {
     let mut param = HashMap::new();
     let _ = param.insert("oauth_verifier".into(), pin.into());
-    let resp = oauth::get(api_twitter_oauth::ACCESS_TOKEN, consumer, Some(request), Some(&param));
+    let resp = oauth::get(api_twitter_oauth::ACCESS_TOKEN,
+                          consumer,
+                          Some(request),
+                          Some(&param));
     let param = split_query(&resp);
     Token::new(param.get("oauth_token").unwrap().to_string(),
                param.get("oauth_token_secret").unwrap().to_string())
@@ -73,14 +79,20 @@ pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Token<'
 pub fn update_status(consumer: &Token, access: &Token, status: &str) {
     let mut param = HashMap::new();
     let _ = param.insert("status".into(), status.into());
-    let _ = oauth::post(api_twitter_soft::UPDATE_STATUS, consumer, Some(access), Some(&param));
+    let _ = oauth::post(api_twitter_soft::UPDATE_STATUS,
+                        consumer,
+                        Some(access),
+                        Some(&param));
 }
 
-pub fn get_last_tweets(consumer: &Token, access: &Token){
+pub fn get_last_tweets(consumer: &Token, access: &Token) {
     let param = HashMap::new();
-    let last_tweets_json = oauth::get(api_twitter_soft::HOME_TIMELINE, consumer, Some(access), Some(&param));
+    let last_tweets_json = oauth::get(api_twitter_soft::HOME_TIMELINE,
+                                      consumer,
+                                      Some(access),
+                                      Some(&param));
     match Tweet::parse_timeline(last_tweets_json) {
         Some(t) => println!("{} - {}", t.created_at, t.text),
-        None => println!("No tweet in your timeline...")
+        None => println!("No tweet in your timeline..."),
     }
 }
