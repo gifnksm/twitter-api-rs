@@ -47,7 +47,7 @@ impl Config {
     }
 
     pub fn write(&self, path_file: &Path) {
-        let mut file = match OpenOptions::new().write(true).open(path_file) {
+        let mut file = match OpenOptions::new().write(true).create(true).open(path_file) {
             Ok(f) => f,
             Err(e) => panic!("{}", e),
         };
