@@ -1,13 +1,12 @@
-use std::{error, fmt, string};
 use oauth;
-use rustc_serialize::json;
+use serde_json;
+use std::{error, fmt, string};
 
 #[derive(Debug)]
 pub enum Error {
     OAuth(oauth::Error),
     FromUtf8(string::FromUtf8Error),
-    JsonBuilder(json::BuilderError),
-    JsonDecoder(json::DecoderError),
+    Json(serde_json::Error),
 }
 
 impl fmt::Display for Error {
@@ -15,8 +14,7 @@ impl fmt::Display for Error {
         match *self {
             Error::OAuth(ref err) => write!(f, "OAuth error: {}", err),
             Error::FromUtf8(ref err) => write!(f, "String conversion error: {}", err),
-            Error::JsonBuilder(ref err) => write!(f, "JSON decoding error: {}", err),
-            Error::JsonDecoder(ref err) => write!(f, "Decoding to struct error: {}", err),
+            Error::Json(ref err) => write!(f, "JSON decoding error: {}", err),
         }
     }
 }
@@ -26,8 +24,7 @@ impl error::Error for Error {
         match *self {
             Error::OAuth(ref err) => err.description(),
             Error::FromUtf8(ref err) => err.description(),
-            Error::JsonBuilder(ref err) => err.description(),
-            Error::JsonDecoder(ref err) => err.description(),
+            Error::Json(ref err) => err.description(),
         }
     }
 
@@ -35,8 +32,7 @@ impl error::Error for Error {
         match *self {
             Error::OAuth(ref err) => Some(err),
             Error::FromUtf8(ref err) => Some(err),
-            Error::JsonBuilder(ref err) => Some(err),
-            Error::JsonDecoder(ref err) => Some(err),
+            Error::Json(ref err) => Some(err),
         }
     }
 }
@@ -53,15 +49,8 @@ impl From<string::FromUtf8Error> for Error {
     }
 }
 
-impl From<json::BuilderError> for Error {
-    fn from(err: json::BuilderError) -> Error {
-        Error::JsonBuilder(err)
-    }
-}
-
-
-impl From<json::DecoderError> for Error {
-    fn from(err: json::DecoderError) -> Error {
-        Error::JsonDecoder(err)
+impl From<serde_json::Error> for Error {
+    fn from(err: serde_json::Error) -> Error {
+        Error::Json(err)
     }
 }
