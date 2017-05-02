@@ -7,6 +7,7 @@ addons:
       - libcurl4-openssl-dev
       - libelf-dev
       - libdw-dev
+      - binutils-dev
 
 rust:
   - nightly
@@ -14,24 +15,26 @@ rust:
   - stable
 
 before_script:
-  - |
-      pip install 'travis-cargo<0.2' --user &&
-      export PATH=$HOME/.local/bin:$PATH
+  - cargo install cargo-kcov
+  - cargo kcov --print-install-kcov-sh | $SHELL
 
 script:
   - |
-      travis-cargo build &&
-      travis-cargo test &&
-      travis-cargo bench &&
-      travis-cargo --only stable doc
+      cargo build &&
+      cargo kcov --coveralls &&
+      cargo bench &&
+      cargo doc
 
-after_success:
-  # upload the documentation from the build with stable (automatically only actually
-  # runs on the master branch, not individual PRs)
-  - travis-cargo --only stable doc-upload
-  # measure code coverage and upload to coveralls.io
-  - travis-cargo coveralls --no-sudo
+after_success: |
+  [ "${TRAVIS_BRANCH}" = master ] &&
+  [ "${TRAVIS_PULL_REQUEST}" == false ] &&
+  [ "${TRAVIS_RUST_VERSION}" == stable ] &&
+  cargo install ghp &&
+  ghp target/doc &&
+  git config user.name "Travis Documentation" &&
+  git config user.email "name@example.com" &&
+  git push -qf https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages 2>&1 > /dev/null
+
 env:
   global:
-    - TRAVIS_CARGO_NIGHTLY_FEATURE=""
     - secure: "N0VHBpQ8Co81/xVM+MQn2JZIFkJMNYf1nn+lwxUrfotesRQUAR6Wh3KHl/tgCdAFw+WvYk6kfxQ0ODFJd7iRdlZez2nujwxczXJj4pU+vqcFkJhlr1uBl2HrWeboGVv3M/60HWyERRz5nI5lGR5FP5qgPQTE/KRTnrPYADBgKNo="
