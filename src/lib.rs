@@ -7,13 +7,12 @@
 #![warn(unused_results)]
 
 extern crate oauth_client as oauth;
-extern crate rustc_serialize as rustc_serialize;
-
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 
 pub use error::Error;
 use oauth::Token;
-use rustc_serialize::Decodable;
-use rustc_serialize::json::{self, Json};
 use std::borrow::Cow;
 use std::collections::HashMap;
 
@@ -31,7 +30,7 @@ mod api_twitter_soft {
                                              json";
 }
 
-#[derive(Clone, Debug, RustcEncodable, RustcDecodable)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Tweet {
     pub created_at: String,
     pub text: String,
@@ -39,9 +38,8 @@ pub struct Tweet {
 
 impl Tweet {
     pub fn parse_timeline(json_string: String) -> Result<Vec<Tweet>, Error> {
-        let conf = Json::from_str(&json_string)?;
-        let d = Decodable::decode(&mut json::Decoder::new(conf))?;
-        Ok(d)
+        let conf = serde_json::from_str(&json_string)?;
+        Ok(conf)
     }
 }
 

@@ -3,12 +3,12 @@
         unused_qualifications, unused_results)]
 
 extern crate twitter_api as twitter;
-extern crate rustc_serialize as rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 extern crate oauth_client as oauth;
 
 use oauth::Token;
-use rustc_serialize::Decodable;
-use rustc_serialize::json::{self, Json};
 use std::convert::AsRef;
 use std::env;
 use std::fs::{File, OpenOptions};
@@ -28,7 +28,7 @@ fn get_home_dir() -> PathBuf {
     }
 }
 
-#[derive(Debug, RustcEncodable, RustcDecodable)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub consumer_key: String,
     pub consumer_secret: String,
@@ -42,8 +42,7 @@ impl Config {
             Ok(f) => f,
             Err(_) => return None,
         };
-        let conf = Json::from_reader(&mut file).unwrap();
-        Decodable::decode(&mut json::Decoder::new(conf)).ok()
+        serde_json::from_reader(&mut file).ok()
     }
 
     pub fn write(&self, path_file: &Path) {
@@ -54,7 +53,7 @@ impl Config {
             Ok(f) => f,
             Err(e) => panic!("{}", e),
         };
-        let _ = write!(&mut file, "{}\n", &json::encode(self).unwrap());
+        let _ = write!(&mut file, "{}\n", &serde_json::to_string(self).unwrap());
     }
 
     pub fn create(path_file: &Path) {
