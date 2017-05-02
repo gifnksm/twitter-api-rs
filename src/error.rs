@@ -1,6 +1,7 @@
-use std::{error, fmt, string};
+
 use oauth;
 use rustc_serialize::json;
+use std::{error, fmt, string};
 
 #[derive(Debug)]
 pub enum Error {

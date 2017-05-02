@@ -6,16 +6,16 @@ extern crate twitter_api as twitter;
 extern crate rustc_serialize as rustc_serialize;
 extern crate oauth_client as oauth;
 
-use std::convert::AsRef;
-use std::io;
-use std::io::prelude::*;
-use std::env;
-use std::fs::{File, OpenOptions};
-use std::path::Path;
-use std::path::PathBuf;
+use oauth::Token;
 use rustc_serialize::Decodable;
 use rustc_serialize::json::{self, Json};
-use oauth::Token;
+use std::convert::AsRef;
+use std::env;
+use std::fs::{File, OpenOptions};
+use std::io;
+use std::io::prelude::*;
+use std::path::Path;
+use std::path::PathBuf;
 
 const TWITTER_CONF_FILENAME: &'static str = ".twitter.conf";
 
@@ -47,7 +47,10 @@ impl Config {
     }
 
     pub fn write(&self, path_file: &Path) {
-        let mut file = match OpenOptions::new().write(true).create(true).open(path_file) {
+        let mut file = match OpenOptions::new()
+                  .write(true)
+                  .create(true)
+                  .open(path_file) {
             Ok(f) => f,
             Err(e) => panic!("{}", e),
         };
