@@ -1,12 +1,13 @@
-#![warn(bad_style,
-        unused, unused_extern_crates, unused_import_braces,
-        unused_qualifications, unused_results)]
+#![warn(
+    bad_style, unused, unused_extern_crates, unused_import_braces, unused_qualifications,
+    unused_results
+)]
 
 extern crate twitter_api as twitter;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
 extern crate oauth_client as oauth;
+extern crate serde_json;
 
 use oauth::Token;
 use std::convert::AsRef;
@@ -46,10 +47,7 @@ impl Config {
     }
 
     pub fn write(&self, path_file: &Path) {
-        let mut file = match OpenOptions::new()
-                  .write(true)
-                  .create(true)
-                  .open(path_file) {
+        let mut file = match OpenOptions::new().write(true).create(true).open(path_file) {
             Ok(f) => f,
             Err(e) => panic!("{}", e),
         };
@@ -85,11 +83,9 @@ fn main() {
     println!("#Welcome to Rwitter!#");
     println!("#####################");
 
-
     let conf = match Config::read(&twitter_conf_file_path) {
         Some(c) => c,
         None => {
-
             Config::create(&twitter_conf_file_path);
 
             let consumer_key = console_input("input your consumer key:");
