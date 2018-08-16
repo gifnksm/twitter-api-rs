@@ -1,5 +1,8 @@
 language: rust
-sudo: false
+sudo: required
+dist: trusty
+
+cache: cargo
 
 addons:
   apt:
@@ -8,6 +11,7 @@ addons:
       - libelf-dev
       - libdw-dev
       - binutils-dev
+      - libiberty-dev
 
 rust:
   - nightly
@@ -15,25 +19,20 @@ rust:
   - stable
 
 before_script:
-  - cargo install cargo-kcov
-  - cargo kcov --print-install-kcov-sh | $SHELL
+  - cargo install cargo-update || echo "cargo-update already installed"
+  - cargo install cargo-travis || echo "cargo-travis already installed"
+  - cargo install-update -a # update outdated cached binaries
 
 script:
   - |
       cargo build &&
-      cargo kcov --coveralls &&
+      cargo test &&
       cargo bench &&
       cargo doc
 
-after_success: |
-  [ "${TRAVIS_BRANCH}" = master ] &&
-  [ "${TRAVIS_PULL_REQUEST}" == false ] &&
-  [ "${TRAVIS_RUST_VERSION}" == stable ] &&
-  cargo install ghp &&
-  ghp target/doc &&
-  git config user.name "Travis Documentation" &&
-  git config user.email "name@example.com" &&
-  git push -qf https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages 2>&1 > /dev/null
+after_success:
+  - cargo coveralls
+  - cargo doc-upload
 
 env:
   global:
