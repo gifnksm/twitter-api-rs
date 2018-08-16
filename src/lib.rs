@@ -6,8 +6,7 @@
 #![warn(unused_qualifications)]
 #![warn(unused_results)]
 
-#[macro_use]
-extern crate error_chain;
+extern crate failure;
 extern crate oauth_client as oauth;
 #[macro_use]
 extern crate serde_derive;
@@ -16,17 +15,8 @@ extern crate serde_json;
 use oauth::Token;
 use std::borrow::Cow;
 use std::collections::HashMap;
-use std::string;
 
-error_chain!{
-    links {
-        OAuth(oauth::Error, oauth::ErrorKind);
-    }
-    foreign_links {
-        FromUtf8(string::FromUtf8Error);
-        Json(serde_json::Error);
-    }
-}
+type Result<T> = std::result::Result<T, failure::Error>;
 
 mod api_twitter_oauth {
     pub const REQUEST_TOKEN: &'static str = "https://api.twitter.com/oauth/request_token";
