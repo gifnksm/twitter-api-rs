@@ -10,9 +10,9 @@
 extern crate twitter_api as twitter;
 #[macro_use]
 extern crate serde_derive;
-extern crate dirs;
+use dirs;
 extern crate oauth_client as oauth;
-extern crate serde_json;
+use serde_json;
 
 use crate::oauth::Token;
 use std::convert::AsRef;

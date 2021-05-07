@@ -6,11 +6,11 @@
 #![warn(unused_qualifications)]
 #![warn(unused_results)]
 
-extern crate failure;
+use failure;
 extern crate oauth_client as oauth;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
+use serde_json;
 
 use crate::oauth::Token;
 use std::borrow::Cow;
@@ -42,7 +42,7 @@ impl Tweet {
     }
 }
 
-fn split_query(query: &str) -> HashMap<Cow<str>, Cow<str>> {
+fn split_query(query: &str) -> HashMap<Cow<'_, str>, Cow<'_, str>> {
     let mut param = HashMap::new();
     for q in query.split('&') {
         let mut s = q.splitn(2, '=');
@@ -53,7 +53,7 @@ fn split_query(query: &str) -> HashMap<Cow<str>, Cow<str>> {
     param
 }
 
-pub fn get_request_token(consumer: &Token) -> Result<Token<'static>> {
+pub fn get_request_token(consumer: &Token<'_>) -> Result<Token<'static>> {
     let bytes = oauth::get(api_twitter_oauth::REQUEST_TOKEN, consumer, None, None)?;
     let resp = String::from_utf8(bytes)?;
     let param = split_query(&resp);
@@ -64,7 +64,7 @@ pub fn get_request_token(consumer: &Token) -> Result<Token<'static>> {
     Ok(token)
 }
 
-pub fn get_authorize_url(request: &Token) -> String {
+pub fn get_authorize_url(request: &Token<'_>) -> String {
     format!(
         "{}?oauth_token={}",
         api_twitter_oauth::AUTHORIZE,
@@ -72,7 +72,11 @@ pub fn get_authorize_url(request: &Token) -> String {
     )
 }
 
-pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Result<Token<'static>> {
+pub fn get_access_token(
+    consumer: &Token<'_>,
+    request: &Token<'_>,
+    pin: &str,
+) -> Result<Token<'static>> {
     let mut param = HashMap::new();
     let _ = param.insert("oauth_verifier".into(), pin.into());
     let bytes = oauth::get(
@@ -92,7 +96,7 @@ pub fn get_access_token(consumer: &Token, request: &Token, pin: &str) -> Result<
 
 /// function to update the status
 /// This function takes as arguments the consumer key, the access key, and the status (obviously)
-pub fn update_status(consumer: &Token, access: &Token, status: &str) -> Result<()> {
+pub fn update_status(consumer: &Token<'_>, access: &Token<'_>, status: &str) -> Result<()> {
     let mut param = HashMap::new();
     let _ = param.insert("status".into(), status.into());
     let _ = oauth::post(
@@ -104,7 +108,7 @@ pub fn update_status(consumer: &Token, access: &Token, status: &str) -> Result<(
     Ok(())
 }
 
-pub fn get_last_tweets(consumer: &Token, access: &Token) -> Result<Vec<Tweet>> {
+pub fn get_last_tweets(consumer: &Token<'_>, access: &Token<'_>) -> Result<Vec<Tweet>> {
     let bytes = oauth::get(
         api_twitter_soft::HOME_TIMELINE,
         consumer,
