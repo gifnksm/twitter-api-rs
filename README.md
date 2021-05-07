@@ -9,7 +9,7 @@ This library allows you to:
 *   get your timeline,
 *   update your timeline.
 
-[Documentation](https://docs.rs/twitter-api-rs)
+[Documentation](https://docs.rs/twitter-api)
 
 ## How to use?
 
