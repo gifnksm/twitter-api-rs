@@ -14,7 +14,7 @@ extern crate dirs;
 extern crate oauth_client as oauth;
 extern crate serde_json;
 
-use oauth::Token;
+use crate::oauth::Token;
 use std::convert::AsRef;
 use std::fs::{File, OpenOptions};
 use std::io;
@@ -22,7 +22,7 @@ use std::io::prelude::*;
 use std::path::Path;
 use std::path::PathBuf;
 
-const TWITTER_CONF_FILENAME: & str = "tweet.conf";
+const TWITTER_CONF_FILENAME: &str = "tweet.conf";
 
 fn get_home_dir() -> PathBuf {
     match dirs::config_dir() {
