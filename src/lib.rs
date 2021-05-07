@@ -6,13 +6,8 @@
 #![warn(unused_qualifications)]
 #![warn(unused_results)]
 
-use failure;
-extern crate oauth_client as oauth;
-#[macro_use]
-extern crate serde_derive;
-use serde_json;
-
-use crate::oauth::Token;
+use oauth_client::{self as oauth, Token};
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::collections::HashMap;
 

@@ -7,20 +7,15 @@
     unused_results
 )]
 
-extern crate twitter_api as twitter;
-#[macro_use]
-extern crate serde_derive;
-use dirs;
-extern crate oauth_client as oauth;
-use serde_json;
-
-use crate::oauth::Token;
+use oauth_client::Token;
+use serde::{Deserialize, Serialize};
 use std::convert::AsRef;
 use std::fs::{File, OpenOptions};
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
 use std::path::PathBuf;
+use twitter_api as twitter;
 
 const TWITTER_CONF_FILENAME: &str = "tweet.conf";
 
