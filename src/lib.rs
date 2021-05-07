@@ -8,8 +8,7 @@
 
 use oauth_client::{self as oauth, Token};
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
-use std::collections::HashMap;
+use std::{borrow::Cow, collections::HashMap, str};
 
 type Result<T> = std::result::Result<T, failure::Error>;
 
@@ -31,9 +30,9 @@ pub struct Tweet {
 }
 
 impl Tweet {
-    pub fn parse_timeline(json_string: String) -> Result<Vec<Tweet>> {
-        let conf = serde_json::from_str(&json_string)?;
-        Ok(conf)
+    pub fn parse_timeline(json_str: impl AsRef<str>) -> Result<Vec<Tweet>> {
+        let tweets = serde_json::from_str(json_str.as_ref())?;
+        Ok(tweets)
     }
 }
 
@@ -50,7 +49,7 @@ fn split_query(query: &str) -> HashMap<Cow<'_, str>, Cow<'_, str>> {
 
 pub fn get_request_token(consumer: &Token<'_>) -> Result<Token<'static>> {
     let bytes = oauth::get(api_twitter_oauth::REQUEST_TOKEN, consumer, None, None)?;
-    let resp = String::from_utf8(bytes)?;
+    let resp = str::from_utf8(&bytes)?;
     let param = split_query(&resp);
     let token = Token::new(
         param.get("oauth_token").unwrap().to_string(),
@@ -80,7 +79,7 @@ pub fn get_access_token(
         Some(request),
         Some(&param),
     )?;
-    let resp = String::from_utf8(bytes)?;
+    let resp = str::from_utf8(&bytes)?;
     let param = split_query(&resp);
     let token = Token::new(
         param.get("oauth_token").unwrap().to_string(),
@@ -110,7 +109,7 @@ pub fn get_last_tweets(consumer: &Token<'_>, access: &Token<'_>) -> Result<Vec<T
         Some(access),
         None,
     )?;
-    let last_tweets_json = String::from_utf8(bytes)?;
-    let ts = Tweet::parse_timeline(last_tweets_json)?;
+    let last_tweets_json = str::from_utf8(&bytes)?;
+    let ts = Tweet::parse_timeline(&last_tweets_json)?;
     Ok(ts)
 }
