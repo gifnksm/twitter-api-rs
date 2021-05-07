@@ -7,25 +7,20 @@
     unused_results
 )]
 
-extern crate twitter_api as twitter;
-#[macro_use]
-extern crate serde_derive;
-extern crate oauth_client as oauth;
-extern crate serde_json;
-
-use oauth::Token;
+use oauth_client::Token;
+use serde::{Deserialize, Serialize};
 use std::convert::AsRef;
-use std::env;
 use std::fs::{File, OpenOptions};
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
 use std::path::PathBuf;
+use twitter_api as twitter;
 
-const TWITTER_CONF_FILENAME: &'static str = ".twitter.conf";
+const TWITTER_CONF_FILENAME: &str = "tweet.conf";
 
 fn get_home_dir() -> PathBuf {
-    match env::home_dir() {
+    match dirs::config_dir() {
         Some(p) => p,
         None => {
             panic!("Impossible to get your home dir!");
@@ -55,7 +50,7 @@ impl Config {
             Ok(f) => f,
             Err(e) => panic!("{}", e),
         };
-        let _ = write!(&mut file, "{}\n", &serde_json::to_string(self).unwrap());
+        let _ = writeln!(&mut file, "{}", &serde_json::to_string(self).unwrap());
     }
 
     pub fn create(path_file: &Path) {
@@ -73,7 +68,7 @@ fn console_input(prompt: &str) -> String {
     line.trim().to_string()
 }
 
-fn help() -> () {
+fn help() {
     println!("update status : update your status.");
     println!("get timeline : get your personal timeline in your console.")
 }
