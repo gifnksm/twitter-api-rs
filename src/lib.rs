@@ -6,11 +6,26 @@
 #![warn(unused_qualifications)]
 #![warn(unused_results)]
 
-use oauth_client::{self as oauth, Token};
+use oauth_client::Token;
 use serde::{Deserialize, Serialize};
 use std::{borrow::Cow, collections::HashMap, str};
+use thiserror::Error;
 
-type Result<T> = std::result::Result<T, failure::Error>;
+pub use oauth_client as oauth;
+pub use serde_json;
+
+pub type Result<T> = std::result::Result<T, Error>;
+
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum Error {
+    #[error("OAuth error: {0}")]
+    Oauth(#[from] oauth::Error),
+    #[error("JSON error: {0}")]
+    Json(#[from] serde_json::Error),
+    #[error("decode string error: {0}")]
+    FromUtf8(#[from] str::Utf8Error),
+}
 
 mod api_twitter_oauth {
     pub const REQUEST_TOKEN: &str = "https://api.twitter.com/oauth/request_token";
