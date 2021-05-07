@@ -10,22 +10,22 @@
 extern crate twitter_api as twitter;
 #[macro_use]
 extern crate serde_derive;
+extern crate dirs;
 extern crate oauth_client as oauth;
 extern crate serde_json;
 
 use oauth::Token;
 use std::convert::AsRef;
-use std::env;
 use std::fs::{File, OpenOptions};
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
 use std::path::PathBuf;
 
-const TWITTER_CONF_FILENAME: &'static str = ".twitter.conf";
+const TWITTER_CONF_FILENAME: &'static str = "tweet.conf";
 
 fn get_home_dir() -> PathBuf {
-    match env::home_dir() {
+    match dirs::config_dir() {
         Some(p) => p,
         None => {
             panic!("Impossible to get your home dir!");
