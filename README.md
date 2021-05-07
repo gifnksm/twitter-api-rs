@@ -21,7 +21,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-twitter-api = "0.4"
+twitter-api = "0.5"
 ```
 
 See [examples](./examples).
