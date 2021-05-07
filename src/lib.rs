@@ -19,14 +19,14 @@ use std::collections::HashMap;
 type Result<T> = std::result::Result<T, failure::Error>;
 
 mod api_twitter_oauth {
-    pub const REQUEST_TOKEN: &'static str = "https://api.twitter.com/oauth/request_token";
-    pub const AUTHORIZE: &'static str = "https://api.twitter.com/oauth/authorize";
-    pub const ACCESS_TOKEN: &'static str = "https://api.twitter.com/oauth/access_token";
+    pub const REQUEST_TOKEN: &str = "https://api.twitter.com/oauth/request_token";
+    pub const AUTHORIZE: &str = "https://api.twitter.com/oauth/authorize";
+    pub const ACCESS_TOKEN: &str = "https://api.twitter.com/oauth/access_token";
 }
 
 mod api_twitter_soft {
-    pub const UPDATE_STATUS: &'static str = "https://api.twitter.com/1.1/statuses/update.json";
-    pub const HOME_TIMELINE: &'static str = "https://api.twitter.com/1.1/statuses/home_timeline.json";
+    pub const UPDATE_STATUS: &str = "https://api.twitter.com/1.1/statuses/update.json";
+    pub const HOME_TIMELINE: &str = "https://api.twitter.com/1.1/statuses/home_timeline.json";
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -42,7 +42,7 @@ impl Tweet {
     }
 }
 
-fn split_query<'a>(query: &'a str) -> HashMap<Cow<'a, str>, Cow<'a, str>> {
+fn split_query(query: &str) -> HashMap<Cow<str>, Cow<str>> {
     let mut param = HashMap::new();
     for q in query.split('&') {
         let mut s = q.splitn(2, '=');

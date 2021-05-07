@@ -22,7 +22,7 @@ use std::io::prelude::*;
 use std::path::Path;
 use std::path::PathBuf;
 
-const TWITTER_CONF_FILENAME: &'static str = "tweet.conf";
+const TWITTER_CONF_FILENAME: & str = "tweet.conf";
 
 fn get_home_dir() -> PathBuf {
     match dirs::config_dir() {
@@ -55,7 +55,7 @@ impl Config {
             Ok(f) => f,
             Err(e) => panic!("{}", e),
         };
-        let _ = write!(&mut file, "{}\n", &serde_json::to_string(self).unwrap());
+        let _ = writeln!(&mut file, "{}", &serde_json::to_string(self).unwrap());
     }
 
     pub fn create(path_file: &Path) {
@@ -73,7 +73,7 @@ fn console_input(prompt: &str) -> String {
     line.trim().to_string()
 }
 
-fn help() -> () {
+fn help() {
     println!("update status : update your status.");
     println!("get timeline : get your personal timeline in your console.")
 }
