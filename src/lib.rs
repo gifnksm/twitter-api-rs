@@ -54,9 +54,7 @@ impl Tweet {
 fn split_query(query: &str) -> HashMap<Cow<'_, str>, Cow<'_, str>> {
     let mut param = HashMap::new();
     for q in query.split('&') {
-        let mut s = q.splitn(2, '=');
-        let k = s.next().unwrap();
-        let v = s.next().unwrap();
+        let (k, v) = q.split_once('=').unwrap();
         let _ = param.insert(k.into(), v.into());
     }
     param
@@ -65,7 +63,7 @@ fn split_query(query: &str) -> HashMap<Cow<'_, str>, Cow<'_, str>> {
 pub fn get_request_token(consumer: &Token<'_>) -> Result<Token<'static>> {
     let bytes = oauth::get(api_twitter_oauth::REQUEST_TOKEN, consumer, None, None)?;
     let resp = str::from_utf8(&bytes)?;
-    let param = split_query(&resp);
+    let param = split_query(resp);
     let token = Token::new(
         param.get("oauth_token").unwrap().to_string(),
         param.get("oauth_token_secret").unwrap().to_string(),
@@ -95,7 +93,7 @@ pub fn get_access_token(
         Some(&param),
     )?;
     let resp = str::from_utf8(&bytes)?;
-    let param = split_query(&resp);
+    let param = split_query(resp);
     let token = Token::new(
         param.get("oauth_token").unwrap().to_string(),
         param.get("oauth_token_secret").unwrap().to_string(),
