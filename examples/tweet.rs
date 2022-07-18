@@ -11,7 +11,7 @@ use color_eyre::{
     eyre::{bail, eyre, Error, Result, WrapErr as _},
     owo_colors::OwoColorize as _,
 };
-use oauth_client::Token;
+use oauth_client::{DefaultRequestBuilder, Token};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::{
@@ -162,13 +162,14 @@ impl Config {
             )?;
             let consumer_token = Token::new(consumer_key, consumer_secret);
 
-            let request_token = match twitter::get_request_token(&consumer_token) {
-                Ok(token) => token,
-                Err(err) => {
-                    error!("Failed to get `request token`: {:?}", err);
-                    continue;
-                }
-            };
+            let request_token =
+                match twitter::get_request_token::<DefaultRequestBuilder>(&consumer_token, &()) {
+                    Ok(token) => token,
+                    Err(err) => {
+                        error!("Failed to get `request token`: {:?}", err);
+                        continue;
+                    }
+                };
 
             eprintln!();
             eprintln!(
@@ -178,14 +179,18 @@ impl Config {
             eprintln!("  {}", twitter::get_authorize_url(&request_token));
 
             let pin = input("Input PIN:", None)?;
-            let access_token =
-                match twitter::get_access_token(&consumer_token, &request_token, &pin) {
-                    Ok(token) => token,
-                    Err(err) => {
-                        error!("Failed to get `access token`: {:?}", err);
-                        continue;
-                    }
-                };
+            let access_token = match twitter::get_access_token::<DefaultRequestBuilder>(
+                &consumer_token,
+                &request_token,
+                &pin,
+                &(),
+            ) {
+                Ok(token) => token,
+                Err(err) => {
+                    error!("Failed to get `access token`: {:?}", err);
+                    continue;
+                }
+            };
 
             let conf = Self {
                 consumer_key: consumer_token.key.to_string(),
@@ -291,7 +296,6 @@ mod conf_file {
 
     fn create_by_user_input(path: impl AsRef<Path>) -> Result<Config> {
         let path = path.as_ref();
-        assert!(path.is_file());
         let conf_dir = path.parent().unwrap();
 
         // Ensure config directory exists
@@ -339,7 +343,7 @@ mod command {
 
         let consumer = config.consumer_token();
         let access = config.access_token();
-        twitter::update_status(&consumer, &access, &status)
+        twitter::update_status::<DefaultRequestBuilder>(&consumer, &access, &status, &())
             .wrap_err("failed to invoking update_status API")?;
 
         Ok(())
@@ -348,7 +352,7 @@ mod command {
     pub(super) fn get_timeline(config: &Config) -> Result<()> {
         let consumer = config.consumer_token();
         let access = config.access_token();
-        let ts = twitter::get_last_tweets(&consumer, &access)
+        let ts = twitter::get_last_tweets::<DefaultRequestBuilder>(&consumer, &access, &())
             .wrap_err("failed to invoking get_timeline API")?;
         if ts.is_empty() {
             eprintln!("No tweet in your timeline...");

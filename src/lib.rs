@@ -6,6 +6,7 @@
 #![warn(unused_qualifications)]
 #![warn(unused_results)]
 
+use oauth::RequestBuilder;
 use oauth_client::Token;
 use serde::{Deserialize, Serialize};
 use std::{borrow::Cow, collections::HashMap, str};
@@ -60,9 +61,22 @@ fn split_query(query: &str) -> HashMap<Cow<'_, str>, Cow<'_, str>> {
     param
 }
 
-pub fn get_request_token(consumer: &Token<'_>) -> Result<Token<'static>> {
-    let bytes = oauth::get(api_twitter_oauth::REQUEST_TOKEN, consumer, None, None)?;
-    let resp = str::from_utf8(&bytes)?;
+pub fn get_request_token<RB>(
+    consumer: &Token<'_>,
+    client: &RB::ClientBuilder,
+) -> Result<Token<'static>>
+where
+    RB: RequestBuilder,
+    RB::ReturnValue: AsRef<[u8]>,
+{
+    let bytes: RB::ReturnValue = oauth::get::<RB>(
+        api_twitter_oauth::REQUEST_TOKEN,
+        consumer,
+        None,
+        None,
+        client,
+    )?;
+    let resp = str::from_utf8(bytes.as_ref())?;
     let param = split_query(resp);
     let token = Token::new(
         param.get("oauth_token").unwrap().to_string(),
@@ -79,20 +93,26 @@ pub fn get_authorize_url(request: &Token<'_>) -> String {
     )
 }
 
-pub fn get_access_token(
+pub fn get_access_token<RB>(
     consumer: &Token<'_>,
     request: &Token<'_>,
     pin: &str,
-) -> Result<Token<'static>> {
+    client: &RB::ClientBuilder,
+) -> Result<Token<'static>>
+where
+    RB: RequestBuilder,
+    RB::ReturnValue: AsRef<[u8]>,
+{
     let mut param = HashMap::new();
     let _ = param.insert("oauth_verifier".into(), pin.into());
-    let bytes = oauth::get(
+    let bytes = oauth::get::<RB>(
         api_twitter_oauth::ACCESS_TOKEN,
         consumer,
         Some(request),
         Some(&param),
+        client,
     )?;
-    let resp = str::from_utf8(&bytes)?;
+    let resp = str::from_utf8(bytes.as_ref())?;
     let param = split_query(resp);
     let token = Token::new(
         param.get("oauth_token").unwrap().to_string(),
@@ -103,26 +123,45 @@ pub fn get_access_token(
 
 /// function to update the status
 /// This function takes as arguments the consumer key, the access key, and the status (obviously)
-pub fn update_status(consumer: &Token<'_>, access: &Token<'_>, status: &str) -> Result<()> {
+pub fn update_status<RB>(
+    consumer: &Token<'_>,
+    access: &Token<'_>,
+    status: &str,
+    client: &RB::ClientBuilder,
+) -> Result<()>
+where
+    RB: RequestBuilder,
+    RB::ReturnValue: AsRef<[u8]>,
+{
     let mut param = HashMap::new();
     let _ = param.insert("status".into(), status.into());
-    let _ = oauth::post(
+    let _ = oauth::post::<RB>(
         api_twitter_soft::UPDATE_STATUS,
         consumer,
         Some(access),
         Some(&param),
+        client,
     )?;
     Ok(())
 }
 
-pub fn get_last_tweets(consumer: &Token<'_>, access: &Token<'_>) -> Result<Vec<Tweet>> {
-    let bytes = oauth::get(
+pub fn get_last_tweets<RB>(
+    consumer: &Token<'_>,
+    access: &Token<'_>,
+    client: &RB::ClientBuilder,
+) -> Result<Vec<Tweet>>
+where
+    RB: RequestBuilder,
+    RB::ReturnValue: AsRef<[u8]>,
+{
+    let bytes = oauth::get::<RB>(
         api_twitter_soft::HOME_TIMELINE,
         consumer,
         Some(access),
         None,
+        client,
     )?;
-    let last_tweets_json = str::from_utf8(&bytes)?;
+    let last_tweets_json = str::from_utf8(bytes.as_ref())?;
     let ts = Tweet::parse_timeline(&last_tweets_json)?;
     Ok(ts)
 }
