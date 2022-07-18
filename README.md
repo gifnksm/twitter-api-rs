@@ -1,10 +1,12 @@
 # twitter-api-rs
 
-[![Crates.io](https://img.shields.io/crates/v/twitter-api.svg)](https://crates.io/crates/twitter-api)
-[![Docs.rs](https://docs.rs/twitter-api/badge.svg)](https://docs.rs/twitter-api)
-![LICENSE](https://img.shields.io/crates/l/twitter-api.svg)
-[![Build Status](https://travis-ci.org/gifnksm/twitter-api-rs.svg)](https://travis-ci.org/gifnksm/twitter-api-rs)
-![Maintenance](https://img.shields.io/badge/maintenance-passively--maintained-yellowgreen.svg)
+[![maintenance status: passively-maintained](https://img.shields.io/badge/maintenance-passively--maintained-yellowgreen.svg)](https://doc.rust-lang.org/cargo/reference/manifest.html#the-badges-section)
+[![license](https://img.shields.io/crates/l/twitter-api.svg)](LICENSE)
+[![crates.io](https://img.shields.io/crates/v/twitter-api.svg)](https://crates.io/crates/twitter-api)
+[![docs.rs](https://img.shields.io/docsrs/twitter-api/latest)](https://docs.rs/twitter-api/latest/)
+[![rust 1.57.0+ badge](https://img.shields.io/badge/rust-1.57.0+-93450a.svg)](https://doc.rust-lang.org/cargo/reference/manifest.html#the-rust-version-field)
+[![Rust CI](https://github.com/gifnksm/twitter-api-rs/actions/workflows/rust-ci.yml/badge.svg)](https://github.com/gifnksm/twitter-api-rs/actions/workflows/rust-ci.yml)
+[![codecov](https://codecov.io/gh/gifnksm/twitter-api-rs/branch/master/graph/badge.svg?token=0NGaJWNYLq)](https://codecov.io/gh/gifnksm/twitter-api-rs)
 
 Unofficial Rust library for the Twitter API.
 
