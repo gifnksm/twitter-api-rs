@@ -18,7 +18,7 @@ thiserror = "1.0.31"
 
 [dev-dependencies]
 color-eyre = "0.6.2"
-dirs = "4.0.0"
+dirs = "5.0.0"
 oauth-client = { version = "0.8.0", features = ["client-reqwest"] }
 
 [badges]
