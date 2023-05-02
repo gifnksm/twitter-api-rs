@@ -22,7 +22,7 @@ dirs = "4.0.0"
 oauth-client = { version = "0.8.0", features = ["client-reqwest"] }
 
 [badges]
-maintenance = { status = "passively-maintained" }
+maintenance = { status = "deprecated" }
 
 [package.metadata.release]
 pre-release-replacements = [
